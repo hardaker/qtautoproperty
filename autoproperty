@@ -31,11 +31,11 @@ foreach my $file (@ARGV) {
     #
     $inputH->open($file) || croak "can't open $file (for 2nd read)\n";
     while(<$inputH>) {
-	if (/(\s+)\/\/.*AUTO_HERE/) {
+	if (/(\s*)\/\/.*AUTO_HERE/) {
 	    $headerH->print($_);
 	    $headerH->print(@lines);
 	    @lines = ();
-	} elsif (/(\s+)\/\/.*AUTO_/) {
+	} elsif (/(\s*)\/\/.*AUTO_/) {
 	    my $space = $1;
 	    my $originalLine = $_;
 	    $headerH->print($originalLine);
