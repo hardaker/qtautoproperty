@@ -5,82 +5,87 @@ use IO::File;
 use Carp;
 use strict;
 
-my ($file) = @ARGV;
+foreach my $file (@ARGV) {
+    # output temporary file for replacing the full header
+    my ($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
 
-# output temporary file for replacing the full header
-my ($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
+    # and finally, the starting file to read in
+    my $inputH = new IO::File;
+    $inputH->open($file) || croak "can't open $file\n";
 
-# and finally, the starting file to read in
-my $inputH = new IO::File;
-$inputH->open($file) || croak "can't open $file\n";
+    my @lines;
+    my $printSpot = 0;
 
-my @lines;
-my $printSpot = 0;
-
-while(<$inputH>) {
-    # pre-read the file looking for a print-here spot
-    if (/\s+\/\/\s+AUTO_HERE/) {
-	$printSpot = 1;
-	last;
-    }
-}
-
-
-$inputH->open($file) || croak "can't open $file (for 2nd read)\n";
-while(<$inputH>) {
-    if (/(\s+)\/\/.*AUTO_HERE/) {
-	$headerH->print($_);
-	$headerH->print(@lines);
-	@lines = ();
-    } elsif (/(\s+)\/\/.*AUTO_/) {
-	my $space = $1;
-	my $originalLine = $_;
-	$headerH->print($originalLine);
-
-        # output temporary file for pulling out just the AUTO macros
-	my ($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
-
-	# output temporary file for the remapped items
-	my ($cppOutH, $cppOutFilename) = tempfile(SUFFIX => ".h");
-
-	# create the header file
-	my $line = $_;
-	$line =~ s/^\s*\/\///;
-	$cppInH->print("#include \"auto_getsettools.h\"\n");
-	$cppInH->print("$line");
-	$cppInH->close();
-
-	# run cpp on it
-	$cppOutH->close();
-	system("g++ -I. -E -o $cppOutFilename $cppInFilename");
-#	system("$(CXX) -E $(CXXFLAGS) $(INCPATH) -o ShadowImageSource_def.h ../shadowblender/ShadowImageSource_in.h
-
-	# now copy the results back out and print to the output header
-	$cppOutH->open($cppOutFilename) || croak "Can't read back in $cppOutFilename";
-	while(<$cppOutH>) {
-	    next if (/^#/);
-	    next if (/^\s*$/);
-
-	    $line = "$space/* AGST */ $_";
-	    if ($printSpot) {
-		push @lines, $line;
-	    } else {
-		$headerH->print($line);
-	    }
+    #
+    # pre-read the file looking for a AUTO_HERE spot
+    #
+    while(<$inputH>) {
+	if (/\s+\/\/\s+AUTO_HERE/) {
+	    $printSpot = 1;
+	    last;
 	}
-
-	# clean up
-	$cppOutH->close();
-	unlink($cppInFilename);
-	unlink($cppOutFilename);
-    } else {
-	next if (/^\s*\/\* AGST \*\//);
-	$headerH->print($_);
     }
+
+    #
+    # read and process the file as requested
+    #
+    $inputH->open($file) || croak "can't open $file (for 2nd read)\n";
+    while(<$inputH>) {
+	if (/(\s+)\/\/.*AUTO_HERE/) {
+	    $headerH->print($_);
+	    $headerH->print(@lines);
+	    @lines = ();
+	} elsif (/(\s+)\/\/.*AUTO_/) {
+	    my $space = $1;
+	    my $originalLine = $_;
+	    $headerH->print($originalLine);
+
+	    # output temporary file for pulling out just the AUTO macros
+	    my ($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
+
+	    # output temporary file for the remapped items
+	    my ($cppOutH, $cppOutFilename) = tempfile(SUFFIX => ".h");
+
+	    # create the header file
+	    my $line = $_;
+	    $line =~ s/^\s*\/\///;
+	    $cppInH->print("#include \"auto_getsettools.h\"\n");
+	    $cppInH->print("$line");
+	    $cppInH->close();
+
+	    # run cpp on it
+	    $cppOutH->close();
+	    system("g++ -I. -E -o $cppOutFilename $cppInFilename");
+	    #	system("$(CXX) -E $(CXXFLAGS) $(INCPATH) -o ShadowImageSource_def.h ../shadowblender/ShadowImageSource_in.h
+
+	    # now copy the results back out and print to the output header
+	    $cppOutH->open($cppOutFilename) || croak "Can't read back in $cppOutFilename";
+	    while(<$cppOutH>) {
+		next if (/^#/);
+		next if (/^\s*$/);
+
+		$line = "$space/* AGST */ $_";
+		if ($printSpot) {
+		    push @lines, $line;
+		} else {
+		    $headerH->print($line);
+		}
+	    }
+
+	    # clean up
+	    $cppOutH->close();
+	    unlink($cppInFilename);
+	    unlink($cppOutFilename);
+	} else {
+	    next if (/^\s*\/\* AGST \*\//);
+	    $headerH->print($_);
+	}
+    }
+
+    $inputH->close();
+
+    # replace the original file
+    system("cp $headerFilename $file\n");
+    unlink($headerFilename);
 }
 
-$inputH->close();
-
-# replace the original file
-system("cp $headerFilename $file\n");
-unlink($headerFilename);
