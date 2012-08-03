@@ -18,7 +18,7 @@
  */
 #define _QTAUTO_TYPE(autotype, lcname)            \
     private:                                                \
-         autotype m_ ## lcname
+         autotype m_ ## lcname;
                                                             
 
 #define _QTAUTO_GET(autotype, lcname)         \
