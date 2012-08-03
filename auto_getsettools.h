@@ -1,6 +1,16 @@
 #ifndef AUTO_GETSETTOOLS_H
 #define AUTO_GETSETTOOLS_H
 
+#ifndef _AUTO_OPERATE
+
+/* replacement macros so you don't have to comment them out */
+
+#define AUTO_GET(autotype, lcname)
+#define AUTO_GET_SIGNAL(autotype, lcname)
+#define AUTO_GET_SET_SIGNAL(autotype, lcname)
+
+#else 
+
 /* this is always the final macro so the terminating ; in the calling file
  * will properly terminate every experssion, allowing for more readable code.
  * IE: this deliberately doesn't have a trailing ';'
@@ -25,14 +35,14 @@
     _AUTO_GET(autotype, lcname)                             \
     _AUTO_TYPE(autotype, lcname)
 
-#define AUTO_GET_WITH_SIGNAL(autotype, lcname)                        \
+#define AUTO_GET_SIGNAL(autotype, lcname)                        \
     Q_PROPERTY(autotype lcname READ lcname NOTIFY lcname ## Changed); \
     _AUTO_GET(autotype, lcname)                                       \
     _AUTO_SIGNAL(autotype, lcname)                                    \
     _AUTO_TYPE(autotype, lcname)
 
 
-#define AUTO_GET_SET_NOTIFY(autotype, lcname, ucname)                   \
+#define AUTO_GET_SET_SIGNAL(autotype, lcname, ucname)                   \
     Q_PROPERTY(autotype lcname READ lcname WRITE set ## ucname NOTIFY lcname ## Changed);                \
     _AUTO_GET(autotype, lcname)                                         \
     _AUTO_SIGNAL(autotype, lcname)                                      \
@@ -47,4 +57,5 @@
                                                                         \
     _AUTO_TYPE(autotype, lcname)
 
+#endif /* _AUTO_OPERATE */
 #endif /* AUTO_GETSETTOOLS_H */

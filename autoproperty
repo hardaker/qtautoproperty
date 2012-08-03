@@ -49,13 +49,22 @@ foreach my $file (@ARGV) {
 	    # create the header file
 	    my $line = $_;
 	    $line =~ s/^\s*\/\///;
+
+	    # this macro actually needs 3 options, with the last one being
+	    # a capatalized version of the second one.
+	    if (/AUTO_GET_SET_SIGNAL\(([^,\)]+),\s*([^,\)]+)\)/) {
+		my ($arg1, $arg2) = ($1, $2);
+		my $arg3 = $arg2;
+		$arg3 =~ s/^(.)/uc($1)/e;
+		$line = "AUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3)\n";
+	    }
 	    $cppInH->print("#include \"auto_getsettools.h\"\n");
 	    $cppInH->print("$line");
 	    $cppInH->close();
 
 	    # run cpp on it
 	    $cppOutH->close();
-	    system("g++ -I. -E -o $cppOutFilename $cppInFilename");
+	    system("g++ -D_AUTO_OPERATE -I. -E -o $cppOutFilename $cppInFilename");
 	    #	system("$(CXX) -E $(CXXFLAGS) $(INCPATH) -o ShadowImageSource_def.h ../shadowblender/ShadowImageSource_in.h
 
 	    # now copy the results back out and print to the output header

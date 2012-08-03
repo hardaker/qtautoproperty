@@ -6,7 +6,7 @@ AUTO PROPERTIES for Qt
   Qt files:
 
 #+BEGIN_SRC c++
-    AUTO_GET_SET_NOTIFY(int, myIntProperty);
+    AUTO_GET_SET_SIGNAL(int, myIntProperty);
 #+END_SRC
 
   The tool, when run, will then add the appropriate get/set/signals to
