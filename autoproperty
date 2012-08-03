@@ -5,6 +5,8 @@ use IO::File;
 use Carp;
 use strict;
 
+my $verbose = 0;
+
 foreach my $file (@ARGV) {
     # output temporary file for replacing the full header
     my ($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
@@ -20,7 +22,7 @@ foreach my $file (@ARGV) {
     # pre-read the file looking for a AUTO_HERE spot
     #
     while(<$inputH>) {
-	if (/\s+\/\/\s+AUTO_HERE/) {
+	if (/AUTO_HERE/) {
 	    $printSpot = 1;
 	    last;
 	}
@@ -31,11 +33,11 @@ foreach my $file (@ARGV) {
     #
     $inputH->open($file) || croak "can't open $file (for 2nd read)\n";
     while(<$inputH>) {
-	if (/(\s*)\/\/.*AUTO_HERE/) {
+	if (/AUTO_HERE/) {
 	    $headerH->print($_);
 	    $headerH->print(@lines);
 	    @lines = ();
-	} elsif (/(\s*)\/\/.*AUTO_/) {
+	} elsif (/^(\s*)(\/\/\s*|)AUTO_/) {
 	    my $space = $1;
 	    my $originalLine = $_;
 	    $headerH->print($originalLine);
@@ -56,7 +58,7 @@ foreach my $file (@ARGV) {
 		my ($arg1, $arg2) = ($1, $2);
 		my $arg3 = $arg2;
 		$arg3 =~ s/^(.)/uc($1)/e;
-		$line = "AUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3)\n";
+		$line = "AUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3);\n";
 	    }
 	    $cppInH->print("#include \"auto_getsettools.h\"\n");
 	    $cppInH->print("$line");
@@ -79,6 +81,16 @@ foreach my $file (@ARGV) {
 		} else {
 		    $headerH->print($line);
 		}
+	    }
+
+	    if ($verbose) {
+		print "$cppInFilename:";
+		system("cat $cppInFilename");
+		print "----\n";
+		
+		print "$cppOutFilename:";
+		system("cat $cppOutFilename");
+		print "----\n";
 	    }
 
 	    # clean up
