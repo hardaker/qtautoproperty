@@ -8,6 +8,7 @@
 #define AUTO_GET(autotype, lcname)
 #define AUTO_GET_SIGNAL(autotype, lcname)
 #define AUTO_GET_SET_SIGNAL(autotype, lcname)
+#define AUTO_HERE
 
 #else 
 
