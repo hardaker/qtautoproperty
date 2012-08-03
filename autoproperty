@@ -1,29 +1,30 @@
 #!/usr/bin/perl
 
-use File::Copy;
 use File::Temp qw/tempfile/;
 use IO::File;
 use Carp;
+use strict;
 
 my ($file) = @ARGV;
 
 # output temporary file for replacing the full header
-($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
+my ($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
 
 # and finally, the starting file to read in
-$inputH = new IO::File;
+my $inputH = new IO::File;
 $inputH->open($file) || croak "can't open $file\n";
 
 while(<$inputH>) {
-    if (/AUTO_/) {
+    if (/(\s+)\/\/.*AUTO_/) {
+	my $space = $1;
 	my $originalLine = $_;
 	$headerH->print($originalLine);
 
         # output temporary file for pulling out just the AUTO macros
-	($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
+	my ($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
 
 	# output temporary file for the remapped items
-	($cppOutH, $cppOutFilename) = tempfile(SUFFIX => ".h");
+	my ($cppOutH, $cppOutFilename) = tempfile(SUFFIX => ".h");
 
 	# create the header file
 	my $line = $_;
@@ -42,7 +43,7 @@ while(<$inputH>) {
 	while(<$cppOutH>) {
 	    next if (/^#/);
 	    next if (/^\s*$/);
-	    $headerH->print("/* AGST */ $_");
+	    $headerH->print("$space/* AGST */ $_");
 	}
 
 	# clean up
@@ -50,10 +51,13 @@ while(<$inputH>) {
 	unlink($cppInFilename);
 	unlink($cppOutFilename);
     } else {
-	next if (/^\/\* AGST \*\//);
+	next if (/^\s*\/\* AGST \*\//);
 	$headerH->print($_);
     }
 }
 
+$inputH->close();
+
 # replace the original file
-move($headerFilename, $file) || croak "failed to move $headerFilename to $file $!";
+system("cp $headerFilename $file\n");
+unlink($headerFilename);
