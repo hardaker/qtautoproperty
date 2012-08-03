@@ -16,6 +16,7 @@ $inputH->open($file) || croak "can't open $file\n";
 while(<$inputH>) {
     if (/AUTO_/) {
 	my $originalLine = $_;
+	$headerH->print($originalLine);
 
         # output temporary file for pulling out just the AUTO macros
 	($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
@@ -52,6 +53,7 @@ while(<$inputH>) {
 	unlink($cppInFilename);
 	unlink($cppOutFilename);
     } else {
+	next if (/^\/\* AGST \*\//);
 	$headerH->print($_);
     }
 }
