@@ -40,7 +40,7 @@ while(<$inputH>) {
 	while(<$cppOutH>) {
 	    next if (/^#/);
 	    next if (/^\s*$/);
-	    $headerH->print("$_");
+	    $headerH->print("/* AGST */ $_");
 	}
 
 	# clean up
