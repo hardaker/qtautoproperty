@@ -60,7 +60,7 @@ AUTO PROPERTIES for Qt
   to call the tool automatically for a given file using a setup like
   this in the /Tools->External->Configure/ settings:
 
-[[file:images/examplesettings.png]]
+[[./images/examplesettings.png]]
 
 *** Using inline macros instead of commented macros
 
