@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+
+use File::Temp qw/tempfile/;
+use IO::File;
+use Carp;
+
+my ($file) = @ARGV;
+
+# output temporary file for replacing the full header
+($headerH, $headerFilename) = tempfile(SUFFIX => ".h");
+
+# and finally, the starting file to read in
+$inputH = new IO::File;
+$inputH->open($file) || croak "can't open $file\n";
+
+while(<$inputH>) {
+    if (/AUTO_/) {
+	my $originalLine = $_;
+
+        # output temporary file for pulling out just the AUTO macros
+	($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
+
+	# output temporary file for the remapped items
+	($cppOutH, $cppOutFilename) = tempfile(SUFFIX => ".h");
+
+	# create the header file
+	my $line = $_;
+	$line =~ s/^\s*\/\///;
+	$cppInH->print("#include \"auto_getsettools.h\"\n");
+	$cppInH->print("$line");
+	$cppInH->close();
+
+	# run cpp on it
+	$cppOutH->close();
+	system("g++ -I. -E -o $cppOutFilename $cppInFilename");
+#	system("$(CXX) -E $(CXXFLAGS) $(INCPATH) -o ShadowImageSource_def.h ../shadowblender/ShadowImageSource_in.h
+
+	# now copy the results back out and print to the output header
+	$cppOutH->open($cppOutFilename) || croak "Can't read back in $cppOutFilename";
+	while(<$cppOutH>) {
+	    next if (/^#/);
+	    next if (/^\s*$/);
+	    $headerH->print("$_");
+	}
+
+	# clean up
+	$cppOutH->close();
+	system("cat $cppInFilename");
+	print "---\n";
+	system("cat $cppOutFilename");
+	print "---\n";
+	unlink($cppInFilename);
+	unlink($cppOutFilename);
+    } else {
+	$headerH->print($_);
+    }
+}
+
+print "output is in $headerFilename\n";
