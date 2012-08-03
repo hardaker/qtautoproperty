@@ -19,10 +19,10 @@ foreach my $file (@ARGV) {
     my $printSpot = 0;
 
     #
-    # pre-read the file looking for a AUTO_HERE spot
+    # pre-read the file looking for a QTAUTO_HERE spot
     #
     while(<$inputH>) {
-	if (/AUTO_HERE/) {
+	if (/QTAUTO_HERE/) {
 	    $printSpot = 1;
 	    last;
 	}
@@ -33,16 +33,16 @@ foreach my $file (@ARGV) {
     #
     $inputH->open($file) || croak "can't open $file (for 2nd read)\n";
     while(<$inputH>) {
-	if (/AUTO_HERE/) {
+	if (/QTAUTO_HERE/) {
 	    $headerH->print($_);
 	    $headerH->print(@lines);
 	    @lines = ();
-	} elsif (/^(\s*)(\/\/\s*|)AUTO_/) {
+	} elsif (/^(\s*)(\/\/\s*|)QTAUTO_/) {
 	    my $space = $1;
 	    my $originalLine = $_;
 	    $headerH->print($originalLine);
 
-	    # output temporary file for pulling out just the AUTO macros
+	    # output temporary file for pulling out just the QTAUTO macros
 	    my ($cppInH, $cppInFilename) = tempfile(SUFFIX => ".h");
 
 	    # output temporary file for the remapped items
@@ -54,19 +54,19 @@ foreach my $file (@ARGV) {
 
 	    # this macro actually needs 3 options, with the last one being
 	    # a capatalized version of the second one.
-	    if (/AUTO_GET_SET_SIGNAL\(([^,\)]+),\s*([^,\)]+)\)/) {
+	    if (/QTAUTO_GET_SET_SIGNAL\(([^,\)]+),\s*([^,\)]+)\)/) {
 		my ($arg1, $arg2) = ($1, $2);
 		my $arg3 = $arg2;
 		$arg3 =~ s/^(.)/uc($1)/e;
-		$line = "AUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3);\n";
+		$line = "QTAUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3);\n";
 	    }
-	    $cppInH->print("#include \"auto_getsettools.h\"\n");
+	    $cppInH->print("#include \"qt_auto_properties.h\"\n");
 	    $cppInH->print("$line");
 	    $cppInH->close();
 
 	    # run cpp on it
 	    $cppOutH->close();
-	    system("g++ -D_AUTO_OPERATE -I. -E -o $cppOutFilename $cppInFilename");
+	    system("g++ -D_QTAUTO_OPERATE -I. -E -o $cppOutFilename $cppInFilename");
 	    #	system("$(CXX) -E $(CXXFLAGS) $(INCPATH) -o ShadowImageSource_def.h ../shadowblender/ShadowImageSource_in.h
 
 	    # now copy the results back out and print to the output header

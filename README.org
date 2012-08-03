@@ -1,12 +1,12 @@
 AUTO PROPERTIES for Qt
 
-* What autoproperty does
+* What qtautoproperty does
 
   This tool lets you write simple macros like this into your header
   Qt files:
 
 #+BEGIN_SRC c++
-    // AUTO_GET_SET_SIGNAL(int, myIntProperty);
+    // QTAUTO_GET_SET_SIGNAL(int, myIntProperty);
 #+END_SRC
 
   The tool, when run, will then add the appropriate get/set/signals to
@@ -35,7 +35,7 @@ AUTO PROPERTIES for Qt
 #+END_SRC
 
   Which is actually what the output produces. though you can customize
-  it by changing the auto_getsettools.h file.  But when it replaces it
+  it by changing the qt_auto_properties.h file.  But when it replaces it
   in your file, it'll be on a single (smashed-together) line.
 
 * Options
@@ -43,15 +43,15 @@ AUTO PROPERTIES for Qt
   You can add a line such as:
 
 #+BEGIN_SRC c++
-    // AUTO_HERE
+    // QTAUTO_HERE
 #+END_SRC c++
 
   And the resulting output will be placed below that line.
 
 * Usage
 
-  To make use of it, copy the auto_getsettools.h file into your source
-  directory and then simply run autoproperty on the header file and it
+  To make use of it, copy the qt_auto_properties.h file into your source
+  directory and then simply run qtautoproperty on the header file and it
   should modify the header file appropriately.  Unless you follow the
   instructions in the next section, you'll need to have your macros
   commented out using // in front of them.
@@ -65,17 +65,17 @@ AUTO PROPERTIES for Qt
 *** Using inline macros instead of commented macros
 
     You can make use of inline macros instead of commented out macros,
-    simply include the auto_getsettools.h file into your header file
+    simply include the qt_auto_properties.h file into your header file
     and the macros will no longer trigger compiler errors as they'll
     be instantiated as empty defines.
 
 *** Available Macros
 #+BEGIN_SRC c++
-    AUTO_GET(type, varname)            // defines just the varname() function
+    QTAUTO_GET(type, varname)            // defines just the varname() function
 
-    AUTO_GET_SIGNAL(type, varname)     // same but all defines a signal
+    QTAUTO_GET_SIGNAL(type, varname)     // same but all defines a signal
                                        // (but you must emit it!!)
 
-    AUTO_GET_SET_SIGNAL(type, varname) // defines setVarname() too
+    QTAUTO_GET_SET_SIGNAL(type, varname) // defines setVarname() too
                                        // and emits the signal
 #+END_SRC c++
