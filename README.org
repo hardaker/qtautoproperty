@@ -1,0 +1,49 @@
+AUTO PROPERTIES for Qt
+
+* What this does
+
+  This tool lets you write simple macros like this into your header
+  Qt files:
+
+#+BEGIN_SRC c++
+    AUTO_GET_SET_NOTIFY(int, myIntProperty);
+#+END_SRC
+
+  The tool, when run, will then add the appropriate get/set/signals to
+  the header file as inline code for your header file.  This prevents
+  you from having to manually type things like:
+
+#+BEGIN_SRC c++
+  Q_PROPERTY(int myIntProperty READ myIntProperty WRITE setMyIntProperity NOTIFY myIntPropertyChanged);
+  public:
+     const int &myIntProperty() const { return m_myIntProperty; }
+
+  signals:
+     void myIntPropertyChanged();
+
+  public slots:
+     void setMyIntProperity(const int &newval) { 
+        if (newval != m_myIntProperty) {
+           m_myIntProperty = newval;
+           emit myIntPropertyChanged();
+        }
+     }
+
+  private:
+
+    int m_myIntProperty;
+#+END_SRC
+
+  Which is actually what the output produces. though you can customize
+  it by changing the auto_getsettools.h file.  But when it replaces it
+  in your file, it'll be on a single (smashed-together) line.
+
+* Options
+
+  You can add a line such as:
+
+#+BEGIN_SRC c++
+    // AUTO_HERE
+#+END_SRC c++
+
+  And the resulting output will be placed below that line.
