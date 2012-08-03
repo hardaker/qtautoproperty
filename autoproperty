@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use File::Copy;
 use File::Temp qw/tempfile/;
 use IO::File;
 use Carp;
@@ -58,4 +59,5 @@ while(<$inputH>) {
     }
 }
 
-print "output is in $headerFilename\n";
+# replace the original file
+move($headerFilename, $file) || croak "failed to move $headerFilename to $file $!";
