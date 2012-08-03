@@ -47,10 +47,6 @@ while(<$inputH>) {
 
 	# clean up
 	$cppOutH->close();
-	system("cat $cppInFilename");
-	print "---\n";
-	system("cat $cppOutFilename");
-	print "---\n";
 	unlink($cppInFilename);
 	unlink($cppOutFilename);
     } else {
