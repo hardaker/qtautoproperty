@@ -6,7 +6,7 @@ AUTO PROPERTIES for Qt
   Qt files:
 
 #+BEGIN_SRC c++
-    AUTO_GET_SET_SIGNAL(int, myIntProperty);
+    // AUTO_GET_SET_SIGNAL(int, myIntProperty);
 #+END_SRC
 
   The tool, when run, will then add the appropriate get/set/signals to
@@ -69,5 +69,13 @@ AUTO PROPERTIES for Qt
     and the macros will no longer trigger compiler errors as they'll
     be instantiated as empty defines.
 
+*** Available Macros
+#+BEGIN_SRC c++
+    AUTO_GET(type, varname)            // defines just the varname() function
 
+    AUTO_GET_SIGNAL(type, varname)     // same but all defines a signal
+                                       // (but you must emit it!!)
 
+    AUTO_GET_SET_SIGNAL(type, varname) // defines setVarname() too
+                                       // and emits the signal
+#+END_SRC c++
