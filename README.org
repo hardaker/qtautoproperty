@@ -1,6 +1,6 @@
 AUTO PROPERTIES for Qt
 
-* What this does
+* What autoproperty does
 
   This tool lets you write simple macros like this into your header
   Qt files:
@@ -47,3 +47,27 @@ AUTO PROPERTIES for Qt
 #+END_SRC c++
 
   And the resulting output will be placed below that line.
+
+* Usage
+
+  To make use of it, copy the auto_getsettools.h file into your source
+  directory and then simply run autoproperty on the header file and it
+  should modify the header file appropriately.  Unless you follow the
+  instructions in the next section, you'll need to have your macros
+  commented out using // in front of them.
+
+  You can set up qtcreator
+  to call the tool automatically for a given file using a setup like
+  this in the /Tools->External->Configure/ settings:
+
+[[file:images/examplesettings.png]]
+
+*** Using inline macros instead of commented macros
+
+    You can make use of inline macros instead of commented out macros,
+    simply include the auto_getsettools.h file into your header file
+    and the macros will no longer trigger compiler errors as they'll
+    be instantiated as empty defines.
+
+
+
