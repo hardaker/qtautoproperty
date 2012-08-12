@@ -27,9 +27,10 @@
               return m_ ## lcname;                          \
          }                                                  \
 
-#define _QTAUTO_SIGNAL(autotype, lcname)                      \
+#define _QTAUTO_SIGNAL(autotype, lcname)                    \
     signals:                                                \
         void lcname ## Changed();                           \
+        void lcname ## Changed(autotype);                   \
 
 #define QTAUTO_GET(autotype, lcname)                          \
     Q_PROPERTY(autotype lcname READ lcname)                \
@@ -53,6 +54,7 @@
         if (newval != m_ ## lcname) {                                   \
             m_ ## lcname = newval;                                      \
             emit lcname ## Changed();                                   \
+            emit lcname ## Changed(newval);                             \
         }                                                               \
     }                                                                   \
                                                                         \
