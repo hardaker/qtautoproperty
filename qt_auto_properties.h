@@ -1,6 +1,14 @@
 #ifndef QTAUTO_PARAMETERS_H
 #define QTAUTO_PARAMETERS_H
 
+/*
+ * This file comes from the qtautoproperties package.  For more
+ * information and usage, please see its github page:
+ *
+ *     http://github.com/hardaker/qtautoproperty
+ */
+   
+
 #ifndef _QTAUTO_OPERATE
 
 /* replacement macros so you don't have to comment them out */
