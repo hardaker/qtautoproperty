@@ -62,6 +62,8 @@ AUTO PROPERTIES for Qt
 
 [[./images/examplesettings.png]]
 
+  [[https://github.com/hardaker/qtautoproperty/blob/master/images/examplesettings.png?raw=true][link to image]]
+
 *** Using inline macros instead of commented macros
 
     You can make use of inline macros instead of commented out macros,
