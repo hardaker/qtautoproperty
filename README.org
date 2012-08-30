@@ -79,3 +79,15 @@ AUTO PROPERTIES for Qt
     QTAUTO_GET_SET_SIGNAL(type, varname) // defines setVarname() too
                                        // and emits the signal
 #+END_SRC c++
+
+*** Turning on extra debugging output
+
+    If you define QTAUTO_DEBUG_SIGNALS_SLOTS and rebuild everything,
+    every time a value is changed in an property a debugging message
+    will be printed (using qDebug()), such as:
+
+       setting new value for  varName   true  =>  false 
+
+    To turn it on within your .pro file, use this:
+
+       DEFINES += QTAUTO_DEBUG_SIGNALS_SLOTS
