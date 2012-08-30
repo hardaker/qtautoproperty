@@ -10,6 +10,15 @@
 #define QTAUTO_GET_SET_SIGNAL(autotype, lcname)
 #define QTAUTO_HERE
 
+#ifdef QTAUTO_DEBUG_SIGNALS_SLOTS
+#include <qdebug.h>
+#define QTAUTO_STRING_NX(A) #A
+#define QTAUTO_STRING(A) QTAUTO_STRING_NX(A)
+#define QTAUTO_DEBUG(msg) do { qDebug() << msg; } while(0);
+#else
+#define QTAUTO_DEBUG(msg)
+#endif
+
 #else 
 
 /* this is always the final macro so the terminating ; in the calling file
@@ -52,6 +61,7 @@
     public slots:                                                       \
     void set ## ucname(const autotype &newval) {                        \
         if (newval != m_ ## lcname) {                                   \
+            QTAUTO_DEBUG("setting new value for " << QTAUTO_STRING(lcname) << " " << m_ ## lcname << " => " << newval); \
             m_ ## lcname = newval;                                      \
             emit lcname ## Changed();                                   \
             emit lcname ## Changed(newval);                             \
