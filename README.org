@@ -35,7 +35,7 @@ AUTO PROPERTIES for Qt
 #+END_SRC
 
   Which is actually what the output produces. though you can customize
-  it by changing the qt_auto_properties.h file.  But when it replaces it
+  it by changing the qtauto_properties.h file.  But when it replaces it
   in your file, it'll be on a single (smashed-together) line.
 
 * Options
@@ -50,7 +50,7 @@ AUTO PROPERTIES for Qt
 
 * Usage
 
-  To make use of it, copy the qt_auto_properties.h file into your source
+  To make use of it, copy the qtauto_properties.h file into your source
   directory and then simply run qtautoproperty on the header file and it
   should modify the header file appropriately.  Unless you follow the
   instructions in the next section, you'll need to have your macros
@@ -67,7 +67,7 @@ AUTO PROPERTIES for Qt
 *** Using inline macros instead of commented macros
 
     You can make use of inline macros instead of commented out macros,
-    simply include the qt_auto_properties.h file into your header file
+    simply include the qtauto_properties.h file into your header file
     and the macros will no longer trigger compiler errors as they'll
     be instantiated as empty defines.
 

@@ -60,7 +60,7 @@ foreach my $file (@ARGV) {
 		$arg3 =~ s/^(.)/uc($1)/e;
 		$line = "QTAUTO_GET_SET_SIGNAL($arg1, $arg2, $arg3)\n";
 	    }
-	    $cppInH->print("#include \"qt_auto_properties.h\"\n");
+	    $cppInH->print("#include \"qtauto_properties.h\"\n");
 	    $cppInH->print("$line");
 	    $cppInH->close();
 
